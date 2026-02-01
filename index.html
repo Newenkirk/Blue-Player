@@ -1,0 +1,248 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>BluePlayer</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="BluePlayer192.png">
+
+  <!-- Keep top UI blue -->
+  <meta name="theme-color" content="#0000FF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BluePlayer">
+
+  <link rel="stylesheet" href="style.css?v=G24">
+  <script src="slow.js?v=G24" defer></script>
+  <script src="app.js?v=G24" defer></script>
+
+  <script>
+    const BP_VER = "G24";
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        const swUrl = "./sw.js?v=" + BP_VER;
+        try {
+          navigator.serviceWorker.register(swUrl, { updateViaCache: "none" }).catch(() => {});
+        } catch {
+          navigator.serviceWorker.register(swUrl).catch(() => {});
+        }
+      });
+    }
+  </script>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <section class="view show" id="menuView">
+      <div class="status">
+        <div class="pill" id="countPill">0 tracks</div>
+        <div class="pill" id="nowPill">Now: —</div>
+
+        <button class="btn" id="addBtn">Add Audio</button>
+        <input id="filePick" type="file" accept=".mp3,audio/mpeg,audio/mp3,audio/*,video/mp4" multiple hidden />
+      </div>
+
+      <div class="list" id="tracksList">
+        <div class="empty" id="tracksEmpty"></div>
+      </div>
+    </section>
+
+    <section class="view" id="playlistView">
+      <div class="headerBar">
+        <div class="pill">Playlists</div>
+        <div class="spacer"></div>
+        <button class="btn" id="createPlBtn">Create Playlist</button>
+      </div>
+
+      <div class="list" id="playlistsList">
+        <div class="empty" id="playlistsEmpty"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="playlistDetailView" hidden>
+      <div class="headerBar panelTop">
+        <button class="squareBtn" id="plBackBtn">X</button>
+        <div class="pill" id="plTitlePill">Playlist</div>
+        <div class="spacer"></div>
+        <button class="btn" id="plAddBtn">Add Audio</button>
+      </div>
+
+      <div class="list" id="playlistTracksList">
+        <div class="empty" id="playlistTracksEmpty"></div>
+      </div>
+    </section>
+
+    <section class="view" id="playerView">
+      <div class="headerBar">
+        <div class="pill" id="playerTitlePill">Player</div>
+        <div class="spacer"></div>
+        <div class="pill" id="playerNowPill">—</div>
+      </div>
+
+      <div class="playerPage">
+        <div class="playerHint" id="playerHint"></div>
+
+        <img id="playerCover" class="playerCover" src="BluePlayer.png" alt="">
+        <input id="playerSeek" type="range" min="0" max="1000" value="0" />
+
+        <div class="playerMeta">
+          <div class="pill playerTime" id="playerTimePill">0:00 / 0:00</div>
+          <div class="playerRightBtns">
+            <button class="loopBtn" id="playerSpeedBtn">:</button>
+            <button class="loopBtn" id="playerLoopBtn">∞</button>
+          </div>
+        </div>
+
+        <div class="playerControls" id="playerControls">
+          <button class="mBtn" id="playerBack10">-10</button>
+          <button class="mBtn" id="playerPrevBtn">&lt;</button>
+          <button class="mBtn" id="playerPlayPause">▶</button>
+          <button class="mBtn" id="playerNextBtn">&gt;</button>
+          <button class="mBtn" id="playerFwd10">+10</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="settingsView">
+      <div class="headerBar">
+        <div class="pill">Settings</div>
+      </div>
+
+      <div class="list" id="settingsList">
+        <button class="setRow" id="setNewenkirk">Newenkirk Mode</button>
+        <button class="setRow" id="setSounds">Sounds</button>
+        <button class="setRow" id="setAnims">Animations</button>
+      </div>
+    </section>
+
+    <div class="playerBar" id="playerBar">
+      <div class="row">
+        <button class="btn" id="playPause">▶</button>
+        <button class="btn" id="stopBtn">■</button>
+        <div class="pill" id="timePill">0:00 / 0:00</div>
+      </div>
+      <input id="seek" type="range" min="0" max="1000" value="0" />
+
+      <div class="bottomNav">
+        <button class="navBtn active" id="navMenu"><span class="navTxt">Menu</span></button>
+        <button class="navBtn" id="navPlaylist"><span class="navTxt">Playlist</span></button>
+        <button class="navBtn" id="navPlayer"><span class="navTxt">Player</span></button>
+        <button class="navBtn" id="navSettings"><span class="navTxt">Settings</span></button>
+      </div>
+
+      <audio id="audio" preload="auto" playsinline></audio>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" hidden>
+    <div class="menu">
+      <div class="menuTop">
+        <div class="menuTitle" id="menuTrack">Menu</div>
+        <button class="xBtn" id="closeMenu">X</button>
+      </div>
+
+      <div class="menuPlayer">
+        <img id="menuCover" class="menuCover" src="BluePlayer.png" alt="">
+        <input id="menuSeek" type="range" min="0" max="1000" value="0" />
+        <div class="menuMeta">
+          <div class="pill menuTime" id="menuTimePill">0:00 / 0:00</div>
+          <div class="menuRightBtns">
+            <button class="loopBtn" id="speedBtn">:</button>
+            <button class="loopBtn" id="loopBtn">∞</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menuControls" id="menuControls">
+        <button class="mBtn" id="back10">-10</button>
+        <button class="mBtn" id="prevBtn">&lt;</button>
+        <button class="mBtn" id="menuPlayPause">▶</button>
+        <button class="mBtn" id="nextBtn">&gt;</button>
+        <button class="mBtn" id="fwd10">+10</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPEED PANEL -->
+  <div class="speedOverlay" id="speedOverlay" hidden>
+    <div class="speedPage">
+      <div class="speedTop">
+        <div class="pill">Speed</div>
+        <div class="spacer"></div>
+        <button class="squareBtn" id="speedCloseBtn">X</button>
+      </div>
+
+      <div class="speedContent">
+        <div class="pill" id="speedValuePill">1x</div>
+        <input id="speedRange" type="range" min="0.4" max="2" step="0.05" value="1" />
+        <button class="btn" id="speedResetBtn">Reset (1x)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctxMenu" id="ctxMenu" hidden>
+    <button class="ctxItem" id="ctxDelete">Delete</button>
+    <button class="ctxItem" id="ctxRename">Rename</button>
+  </div>
+
+  <div class="confirmOverlay" id="delConfirm" hidden>
+    <div class="confirmBox">
+      <div class="confirmText" id="delText">Confirm deletion:</div>
+      <div class="confirmBtns">
+        <button class="confirmBtn" id="delCancel">Cancel</button>
+        <button class="confirmBtn" id="delOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup" id="renamePopup" hidden>
+    <div class="popupBox">
+      <div class="popupTitle">Rename Audio</div>
+      <input id="renameInput" class="popupInput" type="text" autocomplete="off" spellcheck="false">
+      <div class="popupBtns">
+        <button class="popupBtn" id="renameCancelBtn">Cancel</button>
+        <button class="popupBtn" id="renameSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pickerOverlay" id="libPicker" hidden>
+    <div class="pickerBox">
+      <div class="pickerTop">
+        <div class="pickerTitle">Add Audio</div>
+      </div>
+
+      <div class="pickerList" id="libPickerList">
+        <div class="pickerEmpty" id="libPickerEmpty">
+          No audio found in Menu.<br><br>
+          Go to <b>Menu</b> and press <b>Add Audio</b> first.
+        </div>
+      </div>
+
+      <div class="pickerBtns">
+        <button class="pickerBtn" id="libCancelBtn">Cancel</button>
+        <button class="pickerBtn" id="libAddBtn">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden>
+    ERROR: Audio Not Found.
+  </div>
+
+  <div class="popup" id="plPopup" hidden>
+    <div class="popupBox">
+      <div class="popupTitle">Create Playlist</div>
+      <input id="plNameInput" class="popupInput" type="text" autocomplete="off" spellcheck="false">
+      <div class="popupBtns">
+        <button class="popupBtn" id="plCancelBtn">Cancel</button>
+        <button class="popupBtn" id="plCreateBtn">Create</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

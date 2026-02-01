@@ -1,0 +1,913 @@
+/* style.css */
+:root{
+  --bg:#0000FF;
+  --alt:#0000AA;
+  --txt:#FFFFFF;
+}
+
+/* ===== GLOBAL HARD DISABLE TEXT SELECTION (iOS Safari + PWA) ===== */
+/* Disable selection on everything by default */
+html, body, .wrap{
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none; /* disables iOS copy/lookup menu */
+}
+
+/* Also disable selection on ALL elements (safe blanket) */
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  outline:none;
+  transition:none !important;
+  animation:none !important;
+
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+
+/* Allow selection + caret ONLY in typing boxes */
+input, textarea, [contenteditable="true"], [contenteditable="plaintext-only"]{
+  -webkit-user-select:text !important;
+  user-select:text !important;
+  -webkit-touch-callout:default !important;
+}
+
+/* Optional: also allow selection inside your popup inputs by id (extra safety) */
+#renameInput,
+#plNameInput{
+  -webkit-user-select:text !important;
+  user-select:text !important;
+  -webkit-touch-callout:default !important;
+}
+
+[hidden]{
+  display:none !important;
+}
+
+html,body{
+  height:100%;
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+}
+
+/* Fix iOS “gray top” by forcing the safe-area strip to 0000FF */
+body::before{
+  content:"";
+  position:fixed;
+  left:0;
+  right:0;
+  top:0;
+  height:env(safe-area-inset-top);
+  background:#0000FF;
+  z-index:9999;
+  pointer-events:none;
+}
+
+.wrap{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.view{
+  flex:1;
+  display:none;
+  flex-direction:column;
+  min-height:0;
+}
+.view.show{ display:flex; }
+
+.spacer{ flex:1; }
+
+.btn{
+  background:var(--alt);
+  color:var(--txt);
+  border:2px solid var(--bg);
+  padding:10px 12px;
+  font-weight:900;
+  cursor:pointer;
+  user-select:none;
+}
+
+.squareBtn{
+  width:44px;
+  height:44px;
+  background:var(--alt);
+  border:2px solid var(--bg);
+  color:var(--txt);
+  font-weight:900;
+  cursor:pointer;
+  user-select:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.status{
+  padding:10px 14px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  border-bottom:2px solid var(--alt);
+  background:var(--bg);
+}
+
+.status #addBtn{
+  margin-left:auto;
+}
+
+.headerBar{
+  padding:10px 14px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  border-bottom:2px solid var(--alt);
+  background:var(--bg);
+}
+
+.pill{
+  padding:8px 10px;
+  background:var(--alt);
+  border:2px solid var(--bg);
+  font-size:13px;
+  font-weight:900;
+}
+
+/* FULL WIDTH list */
+.list{
+  margin:0;
+  flex:1;
+  background:var(--alt);
+  border:0;
+  overflow:auto;
+  min-height:0;
+}
+
+.empty{
+  padding:16px;
+  font-size:14px;
+  line-height:1.3;
+  font-weight:800;
+}
+
+/* tracks */
+.track{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:2px solid var(--bg);
+  background:var(--alt);
+  cursor:pointer;
+  user-select:none;
+}
+.track:last-child{ border-bottom:none; }
+
+.track:hover{ background:var(--bg); }
+
+.track.active{
+  background:var(--bg);
+  outline:2px solid var(--alt);
+  outline-offset:-2px;
+}
+
+.name{
+  flex:1;
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.miniBtn{
+  background:var(--bg);
+  color:var(--txt);
+  border:2px solid var(--alt);
+  padding:8px 10px;
+  font-weight:900;
+  cursor:pointer;
+  user-select:none;
+  flex:0 0 auto;
+}
+
+/* bottom bar */
+.playerBar{
+  padding:10px 14px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  background:var(--bg);
+  min-height:110px;
+}
+
+.playerBar .row,
+#seek{
+  display:none;
+}
+
+.bottomNav{
+  position:relative;
+  margin-top:2px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.bottomNav::before{
+  content:"";
+  position:absolute;
+  left:-14px;
+  right:-14px;
+  top:-8px;
+  height:2px;
+  background:var(--alt);
+}
+
+.navBtn{
+  flex:1;
+  background:var(--alt);
+  border:3px solid transparent;
+  padding:16px 0;
+  font-weight:900;
+  cursor:pointer;
+  user-select:none;
+  text-align:center;
+}
+
+.navBtn.active{
+  border:3px solid var(--txt);
+}
+
+.navTxt{
+  display:inline-block;
+  font-size:clamp(22px, 5.2vw, 34px);
+  letter-spacing:0.2px;
+  background:linear-gradient(to bottom,
+    #0000FF 0%,
+    #0000FF 25%,
+    #8080FF 50%,
+    #FFFFFF 75%,
+    #FFFFFF 100%
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+  font-weight:900;
+}
+
+.navBtn.active .navTxt{
+  background:linear-gradient(to bottom,
+    #FFFFFF 0%,
+    #FFFFFF 25%,
+    #8080FF 50%,
+    #0000FF 75%,
+    #0000FF 100%
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+}
+
+/* overlay menu */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:var(--alt);
+  z-index:25;
+  opacity:1;
+}
+
+/* Slide animation for overlay menu (only when animOn) */
+body.animOn .overlay{
+  will-change:transform, opacity;
+  transition:transform 220ms linear, opacity 220ms linear !important;
+}
+.overlay.animStart{ transform:translateY(100%); opacity:1; }
+.overlay.animIn{ transform:translateY(0%); opacity:1; }
+.overlay.animOut{ transform:translateY(100%); opacity:1; }
+
+.menu{
+  position:fixed;
+  inset:0;
+  background:var(--alt);
+  display:flex;
+  flex-direction:column;
+  padding:14px;
+  overflow:auto;
+}
+
+.menuTop{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--txt);
+  position:sticky;
+  top:0;
+  background:var(--alt);
+  z-index:5;
+}
+
+.menuTitle{
+  flex:1;
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.xBtn{
+  width:44px;
+  height:44px;
+  background:var(--bg);
+  border:0;
+  color:var(--txt);
+  font-weight:900;
+  cursor:pointer;
+}
+
+.menuPlayer{
+  margin-top:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.menuCover{
+  width:100%;
+  max-width:520px;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  border:2px solid var(--txt);
+  background:var(--alt);
+  margin:0 auto;
+}
+
+/* range base */
+input[type="range"]{
+  width:100%;
+  -webkit-appearance:none;
+  appearance:none;
+  height:18px;
+  background:var(--alt);
+  border:2px solid var(--bg);
+  margin:0;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:22px;
+  height:22px;
+  background:var(--txt);
+  border:2px solid var(--txt);
+}
+
+input[type="range"]::-moz-range-thumb{
+  width:22px;
+  height:22px;
+  background:var(--txt);
+  border:2px solid var(--txt);
+}
+
+input[type="range"]::-moz-range-track{
+  height:18px;
+  background:var(--alt);
+  border:2px solid var(--bg);
+}
+
+.menuTime{ border:0; }
+
+.menuMeta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.menuRightBtns,
+.playerRightBtns{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.loopBtn{
+  background:transparent;
+  border:0;
+  color:var(--txt);
+  font-weight:900;
+  font-size:13px;
+  padding:8px 10px;
+  cursor:pointer;
+  user-select:none;
+}
+
+.loopBtn.loopActive{
+  background:var(--txt);
+  color:var(--bg);
+}
+
+.menuControls{
+  margin-top:14px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  padding-bottom:max(14px, env(safe-area-inset-bottom));
+}
+
+.mBtn{
+  width:clamp(58px, 12vw, 82px);
+  height:clamp(58px, 12vw, 82px);
+  background:var(--alt);
+  border:0;
+  color:var(--txt);
+  font-weight:900;
+  font-size:clamp(18px, 3.3vw, 22px);
+  cursor:pointer;
+  user-select:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* popups */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:40;
+}
+
+.popupBox{
+  width:min(520px, calc(100vw - 28px));
+  background:var(--alt);
+  border:2px solid var(--bg);
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.popupTitle{
+  font-weight:900;
+  font-size:16px;
+}
+
+.popupInput{
+  width:100%;
+  height:44px;
+  background:var(--txt);
+  color:var(--bg);
+  border:2px solid var(--bg);
+  padding:10px 12px;
+  font-weight:900;
+}
+
+.popupBtns{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+}
+
+.popupBtn{
+  background:var(--bg);
+  border:2px solid var(--txt);
+  color:var(--txt);
+  padding:10px 12px;
+  font-weight:900;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* player tab */
+.playerPage{
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  flex:1;
+  min-height:0;
+}
+
+.playerHint{ display:none; }
+
+.playerCover{
+  width:100%;
+  max-width:520px;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  border:2px solid var(--txt);
+  background:var(--alt);
+  margin:0 auto;
+}
+
+.playerMeta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.playerTime{ border:0; }
+
+.playerControls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  padding-bottom:max(14px, env(safe-area-inset-bottom));
+}
+
+/* SPEED overlay */
+.speedOverlay{
+  position:fixed;
+  inset:0;
+  background:var(--alt);
+  z-index:27;
+  opacity:1;
+}
+
+body.animOn .speedOverlay{
+  will-change:transform, opacity;
+  transition:transform 220ms linear, opacity 220ms linear !important;
+}
+.speedOverlay.animStart{ transform:translateY(100%); opacity:1; }
+.speedOverlay.animIn{ transform:translateY(0%); opacity:1; }
+.speedOverlay.animOut{ transform:translateY(100%); opacity:1; }
+
+.speedPage{
+  position:fixed;
+  inset:0;
+  background:var(--alt);
+  display:flex;
+  flex-direction:column;
+  padding:14px;
+  overflow:auto;
+}
+
+.speedTop{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--txt);
+  position:sticky;
+  top:0;
+  background:var(--alt);
+  z-index:5;
+}
+
+.speedContent{
+  margin-top:14px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* picker */
+.pickerOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.0);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:35;
+}
+
+.pickerBox{
+  width:min(560px, calc(100vw - 28px));
+  height:min(72vh, 560px);
+  background:var(--bg);
+  border:2px solid var(--alt);
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.pickerTop{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding-bottom:6px;
+  border-bottom:2px solid var(--alt);
+}
+
+.pickerTitle{
+  font-weight:900;
+  font-size:16px;
+  color:var(--txt);
+}
+
+.pickerList{
+  flex:1;
+  min-height:0;
+  background:var(--alt);
+  border:2px solid var(--bg);
+  overflow:auto;
+}
+
+.pickerEmpty{
+  padding:16px;
+  font-size:14px;
+  line-height:1.3;
+  font-weight:900;
+  background:var(--alt);
+}
+
+.pickRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:2px solid var(--bg);
+  background:var(--alt);
+  cursor:pointer;
+  user-select:none;
+}
+.pickRow:last-child{ border-bottom:none; }
+.pickRow:hover{ background:var(--bg); }
+.pickRow.selected{
+  outline:3px solid var(--txt);
+  outline-offset:-3px;
+}
+
+.pickerBtns{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+}
+
+.pickerBtn{
+  background:var(--alt);
+  border:2px solid var(--bg);
+  color:var(--txt);
+  padding:10px 14px;
+  font-weight:900;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* toast */
+.toast{
+  position:fixed;
+  left:50%;
+  top:18%;
+  transform:translateX(-50%);
+  background:var(--bg);
+  border:2px solid var(--txt);
+  color:var(--txt);
+  padding:12px 14px;
+  font-weight:900;
+  z-index:60;
+  opacity:1;
+}
+
+/* ctx menu */
+.ctxMenu{
+  position:fixed;
+  background:var(--alt);
+  border:2px solid var(--bg);
+  z-index:55;
+  min-width:160px;
+}
+
+.ctxItem{
+  width:100%;
+  background:var(--alt);
+  border:0;
+  color:var(--txt);
+  font-weight:900;
+  padding:12px 12px;
+  text-align:left;
+  cursor:pointer;
+  user-select:none;
+}
+
+.ctxItem + .ctxItem{
+  border-top:2px solid var(--bg);
+}
+
+.ctxItem:hover{
+  background:var(--bg);
+}
+
+/* delete confirm */
+.confirmOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.0);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:58;
+}
+
+.confirmBox{
+  width:min(560px, calc(100vw - 28px));
+  background:var(--bg);
+  border:2px solid var(--txt);
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.confirmText{
+  font-weight:900;
+  text-align:center;
+  line-height:1.3;
+}
+
+.confirmBtns{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.confirmBtn{
+  background:var(--alt);
+  border:2px solid var(--bg);
+  color:var(--txt);
+  padding:10px 14px;
+  font-weight:900;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* ===== Settings rows ===== */
+.setRow{
+  width:100%;
+  text-align:left;
+  padding:16px 14px;
+  background:var(--alt);
+  border:0;
+  border-bottom:2px solid var(--bg);
+  color:var(--txt);
+  font-weight:900;
+  font-size:16px;
+  cursor:pointer;
+  user-select:none;
+}
+
+.setRow:last-child{
+  border-bottom:none;
+}
+
+.setRow.on{
+  background:#FFFFFF;
+  color:#0000FF;
+}
+
+/* ===== Sliding panels (Playlist detail) ===== */
+.panel{
+  position:fixed;
+  inset:0;
+  background:var(--bg);
+  z-index:26;
+  display:flex;
+  flex-direction:column;
+}
+
+.panelTop{
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+
+body.animOn .panel{
+  will-change:transform, opacity;
+  transition:transform 220ms linear, opacity 220ms linear !important;
+}
+
+.panel.animStart{ transform:translateY(100%); opacity:1; }
+.panel.animIn{ transform:translateY(0%); opacity:1; }
+.panel.animOut{ transform:translateY(100%); opacity:1; }
+
+/* ===== NEWENKIRK MODE THEME ===== */
+body.newenkirkOn{
+  --bg:#FFFFFF;
+  --alt:#FFFFFF;
+  --txt:#0000FF;
+}
+
+/* separators visible */
+body.newenkirkOn .status,
+body.newenkirkOn .headerBar{
+  border-bottom:2px solid #0000FF;
+  background:#FFFFFF;
+}
+body.newenkirkOn .bottomNav::before{
+  background:#0000FF;
+}
+
+body.newenkirkOn .list{
+  background:#FFFFFF;
+}
+body.newenkirkOn .track{
+  background:#FFFFFF;
+  border-bottom:2px solid #0000FF;
+}
+
+/* selected/active track becomes 0000FF full row, text white */
+body.newenkirkOn .track.active{
+  background:#0000FF !important;
+  outline:none !important;
+}
+body.newenkirkOn .track.active .name{
+  color:#FFFFFF !important;
+}
+
+/* pills */
+body.newenkirkOn .pill{
+  background:#FFFFFF;
+  border:2px solid #0000FF;
+  color:#0000FF;
+}
+
+body.newenkirkOn .btn,
+body.newenkirkOn .squareBtn{
+  background:#FFFFFF;
+  border:2px solid #0000FF;
+  color:#0000FF;
+}
+
+/* ⋮ button should look like non-newenkirk (blue + white) */
+body.newenkirkOn .miniBtn{
+  background:#0000FF !important;
+  color:#FFFFFF !important;
+  border:2px solid #0000AA !important;
+}
+
+body.newenkirkOn .menuTop{
+  border-bottom:2px solid #0000FF;
+}
+body.newenkirkOn .xBtn{
+  background:#FFFFFF;
+  color:#0000FF;
+  border:2px solid #0000FF;
+}
+body.newenkirkOn .menuCover,
+body.newenkirkOn .playerCover{
+  background:#FFFFFF;
+  border:2px solid #0000FF;
+}
+
+body.newenkirkOn input[type="range"]{
+  border:2px solid #0000FF;
+}
+
+/* settings rows in newenkirk */
+body.newenkirkOn .setRow{
+  background:#FFFFFF;
+  color:#0000FF;
+  border-bottom:2px solid #0000FF;
+}
+
+/* settings enabled: blue fill + white text */
+body.newenkirkOn .setRow.on{
+  background:#0000FF;
+  color:#FFFFFF;
+}
+
+/* bottom nav rectangles black */
+body.newenkirkOn .navBtn{
+  background:#000000;
+}
+
+/* ctx menu outline visible in newenkirk */
+body.newenkirkOn .ctxMenu{
+  border:2px solid #0000FF;
+}
+body.newenkirkOn .ctxItem + .ctxItem{
+  border-top:2px solid #0000FF;
+}
+
+/* Playlist textbox ONLY in newenkirk mode */
+body.newenkirkOn #plNameInput{
+  background:#FFFFFF !important;
+  color:#0000FF !important;
+  border:2px solid #0000FF !important;
+}
+
+/* Player tab controls: blue squares behind -10 < ▶ > +10 in Newenkirk Mode */
+body.newenkirkOn #playerControls .mBtn{
+  background:#0000FF !important;
+  color:#FFFFFF !important;
+}

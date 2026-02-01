@@ -1,0 +1,21 @@
+{
+  "name": "BluePlayer",
+  "short_name": "BluePlayer",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0000FF",
+  "theme_color": "#0000FF",
+  "icons": [
+    {
+      "src": "BluePlayer192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "BluePlayer512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
